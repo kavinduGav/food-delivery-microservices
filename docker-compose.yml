@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - microservices-network
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb+srv://it22366122:it22366122@ds-foodordering.wqymxo5.mongodb.net/?retryWrites=true&w=majority&appName=ds-foodOrdering
+      - JWT_SECRET=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
+      - JWT_EXPIRATION=1d
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
