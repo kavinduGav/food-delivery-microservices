@@ -85,7 +85,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// Get user profile
+
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -102,4 +102,26 @@ exports.verifyToken = (req, res) => {
     valid: true, 
     user: req.user 
   });
+};
+
+
+exports.updateUserRole = async (req, res) => {
+  try {
+    const { role } = req.body;
+    const userId = req.params.userId;
+    
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    user.role = role;
+    await user.save();
+    
+    res.status(200).json({ message: "User role updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
 };

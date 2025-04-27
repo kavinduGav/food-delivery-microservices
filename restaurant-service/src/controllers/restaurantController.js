@@ -2,10 +2,9 @@
 const { log } = require("node:console");
 const Restaurant = require("../models/Restaurant");
 const mongoose = require("mongoose");
-const User = require("../../../auth-service/src/models/User"); 
 
-// ADMIN SPECIFIC LOGIC
-// ===================
+const axios = require('axios');
+
 
 // Get all restaurants (admin only)
 exports.getAllRestaurants = async (req, res) => {
@@ -22,30 +21,40 @@ exports.getAllRestaurants = async (req, res) => {
 exports.verifyRestaurant = async (req, res) => {
   try {
     const restaurant = await Restaurant.findById(req.params.id);
-
+    
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
-     const user = await User.findById(restaurant.owner);
-     user.role = "restaurant_admin";
 
+    
+    try {
+      
+      await axios.put(`http://localhost:5000/api/auth/${restaurant.owner}/role`, {
+        role: "restaurant_admin"
+      }, {
+        headers: {
+          
+          Authorization: req.headers.authorization
+        }
+      });
+    } catch (authError) {
+      console.error("Error updating user role:", authError);
+      return res.status(500).json({ message: "Failed to update user role" });
+    }
 
-     console.log(req.params.id);
     restaurant.verified = true;
     await restaurant.save();
-    
-     await user.save();
 
-    res
-      .status(200)
-      .json({ message: "Restaurant verified successfully", restaurant });
+    res.status(200).json({ 
+      message: "Restaurant verified successfully", 
+      restaurant 
+    });
   } catch (err) {
     console.error(err);
 
     if (err.kind === "ObjectId") {
       return res.status(404).json({ message: "Restaurant not found" });
     }
-
    
     res.status(500).json({ message: "Server error" });
   }
