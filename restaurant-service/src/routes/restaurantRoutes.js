@@ -46,9 +46,9 @@ router.get(
   menuItemController.getMyMenuItems
 );
 router.post(
-  "/my-menu-items",
+  "/menu-items",
   isRestaurantOwner,
-  menuItemController.createMyMenuItem
+  menuItemController.createMenuItem
 );
 router.put(
   "/my-menu-items/:id",

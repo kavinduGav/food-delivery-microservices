@@ -29,7 +29,7 @@ exports.verifyRestaurant = async (req, res) => {
     
     try {
       
-      await axios.put(`http://localhost:5000/api/auth/${restaurant.owner}/role`, {
+      await axios.put(`http://localhost:3000/api/auth/${restaurant.owner}/role`, {
         role: "restaurant_admin"
       }, {
         headers: {

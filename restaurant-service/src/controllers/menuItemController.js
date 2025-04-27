@@ -26,7 +26,7 @@ exports.getMyMenuItems = async (req, res) => {
 };
 
 // Create menu item for the restaurant owner's restaurant
-exports.createMyMenuItem = async (req, res) => {
+exports.createMenuItem = async (req, res) => {
   try {
     const {
       name,
@@ -34,14 +34,12 @@ exports.createMyMenuItem = async (req, res) => {
       price,
       category,
       image,
-      preparationTime,
-      specialDiets,
-      spicyLevel,
+     
     } = req.body;
 
-    // First find the owner's restaurant
+    
     const restaurant = await Restaurant.findOne({ owner: req.user.id });
-
+console.log(res.user);
     if (!restaurant) {
       return res.status(404).json({
         message: "You do not have a restaurant yet. Please create one first.",
@@ -56,9 +54,7 @@ exports.createMyMenuItem = async (req, res) => {
       category,
       restaurant: restaurant._id, // Use restaurant ID from query
       image,
-      preparationTime,
-      specialDiets,
-      spicyLevel,
+     
     });
 
     await menuItem.save();
