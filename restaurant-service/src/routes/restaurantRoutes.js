@@ -27,7 +27,7 @@ router.get(
   isRestaurantOwner,
   restaurantController.getMyRestaurant
 );
-router.post("/", isRestaurantOwner, restaurantController.createRestaurant);
+router.post("/", auth, restaurantController.createRestaurant);
 router.put(
   "/my-restaurant",
   isRestaurantOwner,

@@ -1,4 +1,5 @@
 // src/controllers/restaurantController.js
+const { log } = require("node:console");
 const Restaurant = require("../models/Restaurant");
 const mongoose = require("mongoose");
 
@@ -24,9 +25,15 @@ exports.verifyRestaurant = async (req, res) => {
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
+     const user = await user.findById(restaurant.owner);
+     user.role = "restaurant_admin";
 
+
+     console.log(req.params.id);
     restaurant.verified = true;
     await restaurant.save();
+    
+     await user.save();
 
     res
       .status(200)
@@ -38,6 +45,7 @@ exports.verifyRestaurant = async (req, res) => {
       return res.status(404).json({ message: "Restaurant not found" });
     }
 
+   
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -147,7 +155,7 @@ exports.createRestaurant = async (req, res) => {
       });
     }
 
-    const { name, address, phone, cuisine, operatingHours } = req.body;
+    const { name, address, phone  } = req.body;
 
     // Create new restaurant with owner ID from JWT
     const restaurant = new Restaurant({
@@ -155,9 +163,7 @@ exports.createRestaurant = async (req, res) => {
       owner: req.user.id, // From JWT token
       address,
       phone,
-      cuisine,
-      operatingHours,
-      verified: false, // Admin will verify later
+     
     });
 
     await restaurant.save();
