@@ -2,6 +2,7 @@
 const { log } = require("node:console");
 const Restaurant = require("../models/Restaurant");
 const mongoose = require("mongoose");
+const User = require("../../../auth-service/src/models/User"); 
 
 // ADMIN SPECIFIC LOGIC
 // ===================
@@ -25,7 +26,7 @@ exports.verifyRestaurant = async (req, res) => {
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
-     const user = await user.findById(restaurant.owner);
+     const user = await User.findById(restaurant.owner);
      user.role = "restaurant_admin";
 
 
