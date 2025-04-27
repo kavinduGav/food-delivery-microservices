@@ -15,7 +15,7 @@ services:
     build: ./auth-service
     container_name: auth-service
     ports:
-      - "5000:5000"
+      - "6000:6000"
     depends_on:
       - mongo
     environment:
@@ -25,6 +25,24 @@ services:
       - JWT_EXPIRATION=1d
     networks:
       - microservices-network
+
+  feedback-service:
+    build: ./feedback-service
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./feedback-service:/app
+    environment:
+      - NODE_ENV=development
+
+  diliver-service:
+    build: ./diliver-service
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./diliver-service:/app
+    environment:
+      - NODE_ENV=development
 
 networks:
   microservices-network:
