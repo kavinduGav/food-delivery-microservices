@@ -25,14 +25,12 @@ const auth = (req, res, next) => {
 // Restaurant owner role guard
 const isRestaurantOwner = (req, res, next) => {
   auth(req, res, () => {
-    if (req.user && req.user.role === "restaurant") {
+    if (req.user && req.user.role === "restaurant_admin") {
       next();
     } else {
-      res
-        .status(403)
-        .json({
-          message: "Access denied. Restaurant owner privileges required",
-        });
+      res.status(403).json({
+        message: "Access denied. Restaurant owner privileges required",
+      });
     }
   });
 };
@@ -40,7 +38,7 @@ const isRestaurantOwner = (req, res, next) => {
 // Admin role guard
 const isAdmin = (req, res, next) => {
   auth(req, res, () => {
-    if (req.user && req.user.role === "admin") {
+    if (req.user && req.user.role === "global_admin") {
       next();
     } else {
       res
@@ -68,16 +66,13 @@ const isRestaurantOwnerOrAdmin = (req, res, next) => {
   auth(req, res, () => {
     if (
       req.user &&
-      (req.user.role === "restaurant" || req.user.role === "admin")
+      (req.user.role === "restaurant_admin" || req.user.role === "global_admin")
     ) {
       next();
     } else {
-      res
-        .status(403)
-        .json({
-          message:
-            "Access denied. Restaurant owner or admin privileges required",
-        });
+      res.status(403).json({
+        message: "Access denied. Restaurant owner or admin privileges required",
+      });
     }
   });
 };

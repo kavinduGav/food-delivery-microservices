@@ -1,7 +1,119 @@
-// Enhanced restaurantController.js with owner-specific access controls
-
+// src/controllers/restaurantController.js
 const Restaurant = require("../models/Restaurant");
 const mongoose = require("mongoose");
+
+// ADMIN SPECIFIC LOGIC
+// ===================
+
+// Get all restaurants (admin only)
+exports.getAllRestaurants = async (req, res) => {
+  try {
+    const restaurants = await Restaurant.find();
+    res.status(200).json(restaurants);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Verify a restaurant (admin only)
+exports.verifyRestaurant = async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findById(req.params.id);
+
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    restaurant.verified = true;
+    await restaurant.save();
+
+    res
+      .status(200)
+      .json({ message: "Restaurant verified successfully", restaurant });
+  } catch (err) {
+    console.error(err);
+
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Get all unverified restaurants (admin only)
+exports.getUnverifiedRestaurants = async (req, res) => {
+  try {
+    const restaurants = await Restaurant.find({ verified: false });
+    res.status(200).json(restaurants);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Admin update restaurant details
+exports.adminUpdateRestaurant = async (req, res) => {
+  try {
+    const { name, address, phone, cuisine, operatingHours, verified } =
+      req.body;
+
+    // Find restaurant
+    let restaurant = await Restaurant.findById(req.params.id);
+
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    // Update fields
+    restaurant.name = name || restaurant.name;
+    restaurant.address = address || restaurant.address;
+    restaurant.phone = phone || restaurant.phone;
+    restaurant.cuisine = cuisine || restaurant.cuisine;
+    restaurant.operatingHours = operatingHours || restaurant.operatingHours;
+    restaurant.verified =
+      verified !== undefined ? verified : restaurant.verified;
+
+    await restaurant.save();
+
+    res.status(200).json(restaurant);
+  } catch (err) {
+    console.error(err);
+
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Admin delete restaurant
+exports.adminDeleteRestaurant = async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findById(req.params.id);
+
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    await Restaurant.deleteOne({ _id: restaurant._id });
+
+    res.status(200).json({ message: "Restaurant removed" });
+  } catch (err) {
+    console.error(err);
+
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// RESTAURANT OWNER SPECIFIC LOGIC
+// ===============================
 
 // Get restaurant for the logged-in owner
 exports.getMyRestaurant = async (req, res) => {
@@ -118,4 +230,49 @@ exports.updateMyRestaurantAvailability = async (req, res) => {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
+};
+
+// SHARED/PUBLIC ENDPOINTS
+// =======================
+
+// Get restaurant by ID (public or authenticated)
+exports.getRestaurantById = async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findById(req.params.id);
+
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    res.status(200).json(restaurant);
+  } catch (err) {
+    console.error(err);
+
+    if (err.kind === "ObjectId") {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Get all verified restaurants (public)
+exports.getVerifiedRestaurants = async (req, res) => {
+  try {
+    const restaurants = await Restaurant.find({
+      verified: true,
+      isAvailable: true,
+    });
+
+    res.status(200).json(restaurants);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.test = async (req, res) => {
+  const loggedInUser = req.user;
+  console.log(loggedInUser);
+  res.status(200).json({ message: "restaurant test done" });
 };

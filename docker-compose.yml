@@ -26,6 +26,21 @@ services:
     networks:
       - microservices-network
 
+       restaurant-service:
+    build: ./restaurant-service
+    container_name: restaurant-service
+    ports:
+      - "5001:5001"
+    depends_on:
+      - mongo
+    environment:
+      - PORT=5001
+      - MONGO_URI=mongodb+srv://it22366122:it22366122@ds-foodordering.wqymxo5.mongodb.net/?retryWrites=true&w=majority&appName=ds-foodOrdering
+      - JWT_SECRET=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30
+      - JWT_EXPIRATION=1d
+    networks:
+      - microservices-network
+
 networks:
   microservices-network:
     driver: bridge

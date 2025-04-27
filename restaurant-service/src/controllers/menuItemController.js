@@ -161,4 +161,48 @@ exports.deleteMyMenuItem = async (req, res) => {
   }
 };
 
+// Update menu item availability
+exports.updateMenuItemAvailability = async (req, res) => {
+  try {
+    const { isAvailable } = req.body;
+
+    if (isAvailable === undefined) {
+      return res
+        .status(400)
+        .json({ message: "Availability status is required" });
+    }
+
+    // Find the owner's restaurant
+    const restaurant = await Restaurant.findOne({ owner: req.user.id });
+
+    if (!restaurant) {
+      return res.status(404).json({
+        message: "You do not have a restaurant yet.",
+      });
+    }
+
+    // Find menu item and verify it belongs to the owner's restaurant
+    const menuItem = await MenuItem.findOne({
+      _id: req.params.id,
+      restaurant: restaurant._id,
+    });
+
+    if (!menuItem) {
+      return res.status(404).json({
+        message: "Menu item  not found or does not belong to your restaurant",
+      });
+    }
+
+    menuItem.isAvailable = isAvailable;
+    await menuItem.save();
+
+    res.status(200).json({
+      message: "Menu item availability updated",
+      menuItem,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
