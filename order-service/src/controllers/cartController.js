@@ -1,6 +1,5 @@
 const Cart = require('../models/Cart');
-//const MenuItem = require('../models/MenuItem');
-//const Restaurant = require('../models/Restaurant');
+const axios = require('axios');
 
 // Get the current user's cart
 exports.getCart = async (req, res) => {
@@ -28,10 +27,19 @@ exports.addToCart = async (req, res) => {
     if (!menuItemId || !quantity || quantity < 1) {
       return res.status(400).json({ message: 'Invalid request data' });
     }
-    
+    console.log(menuItemId);
+    console.log(quantity);
     // Get menu item details
-    const menuItem = await MenuItem.findById(menuItemId);
-    if (!menuItem) {
+    let menuItem;
+    try {
+      const response = await axios.get(`http://localhost:5001/api/restaurants/menu-items/${menuItemId}`, {
+        headers: {
+          Authorization: req.headers.authorization
+        }
+      });
+      menuItem = response.data; // Extract the data from the axios response
+    } catch (err) {
+      console.error(err.message);
       return res.status(404).json({ message: 'Menu item not found' });
     }
     
