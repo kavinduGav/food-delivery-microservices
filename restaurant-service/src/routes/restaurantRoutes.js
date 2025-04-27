@@ -71,38 +71,9 @@ router.get("/verified", restaurantController.getVerifiedRestaurants);
 router.get("/:id", restaurantController.getRestaurantById);
 
 // Routes for menu items (public)
-router.get("/:restaurantId/menu-items", async (req, res) => {
-  try {
-    const menuItems = await MenuItem.find({
-      restaurant: req.params.restaurantId,
-      isAvailable: true,
-    });
-    res.status(200).json(menuItems);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
+router.get("/:restaurantId/menu-items", menuItemController.getMenuItems);
 
-router.get("/menu-items/:id", async (req, res) => {
-  try {
-    const menuItem = await MenuItem.findById(req.params.id);
-
-    if (!menuItem) {
-      return res.status(404).json({ message: "Menu item not found" });
-    }
-
-    res.status(200).json(menuItem);
-  } catch (err) {
-    console.error(err);
-
-    if (err.kind === "ObjectId") {
-      return res.status(404).json({ message: "Menu item not found" });
-    }
-
-    res.status(500).json({ message: "Server error" });
-  }
-});
+router.get("/menu-items/:id", menuItemController.getMenuItemById);
 router.get("/test/test", auth, restaurantController.test);
 
 module.exports = router;

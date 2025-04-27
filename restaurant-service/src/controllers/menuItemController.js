@@ -66,6 +66,35 @@ console.log(res.user);
   }
 };
 
+exports.getMenuItems = async (req, res) => {
+  try {
+    const menuItems = await MenuItem.find({ restaurant: req.params.restaurantId });
+    res.status(200).json(menuItems);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+exports.getMenuItemById = async (req, res) => {
+  try {
+    const menuItem = await MenuItem.findById(req.params.id);
+    if (!menuItem) {
+      return res.status(404).json({ message: "Menu item not found" });
+    }
+    res.status(200).json(menuItem);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+
+
+
+
 // Update menu item for owner's restaurant
 exports.updateMyMenuItem = async (req, res) => {
   try {
