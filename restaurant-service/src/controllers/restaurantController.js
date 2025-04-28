@@ -168,7 +168,7 @@ exports.createRestaurant = async (req, res) => {
       });
     }
 
-    const { name, address, phone  } = req.body;
+    const { name, address, phone ,image } = req.body;
 
     // Create new restaurant with owner ID from JWT
     const restaurant = new Restaurant({
@@ -176,6 +176,7 @@ exports.createRestaurant = async (req, res) => {
       owner: req.user.id, // From JWT token
       address,
       phone,
+      image
      
     });
 
@@ -221,13 +222,8 @@ exports.updateMyRestaurant = async (req, res) => {
 // Update restaurant availability
 exports.updateMyRestaurantAvailability = async (req, res) => {
   try {
-    const { isAvailable } = req.body;
-
-    if (isAvailable === undefined) {
-      return res
-        .status(400)
-        .json({ message: "Availability status is required" });
-    }
+  
+  
 
     // Find restaurant by owner ID from JWT token
     const restaurant = await Restaurant.findOne({ owner: req.user.id });
@@ -237,8 +233,8 @@ exports.updateMyRestaurantAvailability = async (req, res) => {
         message: "You do not have a restaurant yet. Please create one first.",
       });
     }
-
-    restaurant.isAvailable = isAvailable;
+   const  currentStatus = restaurant.isAvailable;
+    restaurant.isAvailable = !currentStatus;
     await restaurant.save();
 
     res.status(200).json({
