@@ -39,7 +39,7 @@ exports.createMenuItem = async (req, res) => {
 
     
     const restaurant = await Restaurant.findOne({ owner: req.user.id });
-console.log(res.user);
+//console.log(res.user);
     if (!restaurant) {
       return res.status(404).json({
         message: "You do not have a restaurant yet. Please create one first.",

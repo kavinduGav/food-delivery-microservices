@@ -75,7 +75,7 @@ router.get("/verified", restaurantController.getVerifiedRestaurants);
 router.get("/:id", restaurantController.getRestaurantById);
 
 // Routes for menu items (public)
-router.get("/:restaurantId/menu-items", menuItemController.getMenuItems);
+//router.get("/:restaurantId/menu-items", menuItemController.getMenuItems);
 router.get("/public/menu-items", menuItemController.getMenuItemsClient);
 
 router.get("/menu-items/:id", menuItemController.getMenuItemById);
