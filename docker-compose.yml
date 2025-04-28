@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   mongo:
@@ -25,6 +25,25 @@ services:
       - JWT_EXPIRATION=1d
     networks:
       - microservices-network
+
+  payment-service:
+    build: ./payment-service
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - MONGODB_URI=mongodb+srv://admin:admin1234@cluster0.tayveae.mongodb.net/food_delivery_payment_db?retryWrites=true&w=majority
+      - JWT_SECRET=35bdba807fbd504850d82daaa1cd4d920ddec97ee33a52f4c9ceac29aa5f2095
+      - PAYHERE_MERCHANT_ID=1230287
+      - PAYHERE_SECRET=MTg5OTM5ODQ1MTM4NjMyMzg1MTcyNDc0Njg3ODMyNDUxNDk3NjYz
+      - NODE_ENV=development
+    depends_on:
+      - mongo
+    networks:
+      - microservices-network
+    volumes:
+      - ./payment-service:/usr/src/app
+      - /usr/src/app/node_modules
 
 networks:
   microservices-network:
