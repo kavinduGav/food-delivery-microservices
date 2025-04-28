@@ -76,7 +76,7 @@ exports.addToCart = async (req, res) => {
     
     if (itemIndex > -1) {
       // Update existing item quantity
-      cart.items[itemIndex].quantity = quantity;
+      cart.items[itemIndex].quantity += quantity;
     } else {
       // Add new item to cart
       cart.items.push({

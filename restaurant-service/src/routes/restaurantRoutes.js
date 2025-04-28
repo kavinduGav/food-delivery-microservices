@@ -11,7 +11,7 @@ const {
 } = require("../middleware/authGuard");
 
 // Admin routes
-router.get("/all", isAdmin, restaurantController.getAllRestaurants);
+router.get("/all",  restaurantController.getAllRestaurants);
 router.patch("/:id/verify", isAdmin, restaurantController.verifyRestaurant);
 router.get(
   "/unverified",
