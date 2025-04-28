@@ -66,7 +66,7 @@ console.log(res.user);
   }
 };
 
-exports.getMenuItems = async (req, res) => {
+exports.getMenuItemsClient = async (req, res) => {
   try {
     const menuItems = await MenuItem.find({ restaurant: req.params.restaurantId });
     res.status(200).json(menuItems);
