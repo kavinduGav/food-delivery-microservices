@@ -36,7 +36,12 @@ exports.register = async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRATION },
       (err, token) => {
         if (err) throw err;
-        res.status(201).json({ token });
+        res.status(201).json({ token,
+          id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+         });
       }
     );
   } catch (err) {

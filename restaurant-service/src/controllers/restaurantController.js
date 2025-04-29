@@ -165,7 +165,7 @@ exports.createRestaurant = async (req, res) => {
       });
     }
 
-    const { name, address, phone  } = req.body;
+    const { name, address, phone,category,image  } = req.body;
 
     // Create new restaurant with owner ID from JWT
     const restaurant = new Restaurant({
@@ -173,6 +173,8 @@ exports.createRestaurant = async (req, res) => {
       owner: req.user.id, // From JWT token
       address,
       phone,
+      category,
+      image,
      
     });
 
