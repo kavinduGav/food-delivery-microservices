@@ -26,7 +26,7 @@ services:
     networks:
       - microservices-network
 
-       restaurant-service:
+  restaurant-service:
     build: ./restaurant-service
     container_name: restaurant-service
     ports:
