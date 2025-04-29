@@ -189,13 +189,9 @@ exports.deleteMyMenuItem = async (req, res) => {
 // Update menu item availability
 exports.updateMenuItemAvailability = async (req, res) => {
   try {
-    const { isAvailable } = req.body;
+   
 
-    if (isAvailable === undefined) {
-      return res
-        .status(400)
-        .json({ message: "Availability status is required" });
-    }
+    
 
     // Find the owner's restaurant
     const restaurant = await Restaurant.findOne({ owner: req.user.id });
@@ -218,7 +214,8 @@ exports.updateMenuItemAvailability = async (req, res) => {
       });
     }
 
-    menuItem.isAvailable = isAvailable;
+    const currrentSatatus = menuItem.isAvailable;
+    menuItem.isAvailable = !currrentSatatus;
     await menuItem.save();
 
     res.status(200).json({
