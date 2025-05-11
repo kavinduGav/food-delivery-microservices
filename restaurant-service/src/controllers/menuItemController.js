@@ -39,7 +39,7 @@ exports.createMenuItem = async (req, res) => {
 
     
     const restaurant = await Restaurant.findOne({ owner: req.user.id });
-//console.log(res.user);
+console.log(res.user);
     if (!restaurant) {
       return res.status(404).json({
         message: "You do not have a restaurant yet. Please create one first.",
@@ -66,7 +66,7 @@ exports.createMenuItem = async (req, res) => {
   }
 };
 
-exports.getMenuItemsClient = async (req, res) => {
+exports.getMenuItems = async (req, res) => {
   try {
     const menuItems = await MenuItem.find({ restaurant: req.params.restaurantId });
     res.status(200).json(menuItems);
@@ -189,9 +189,13 @@ exports.deleteMyMenuItem = async (req, res) => {
 // Update menu item availability
 exports.updateMenuItemAvailability = async (req, res) => {
   try {
-   
+    const { isAvailable } = req.body;
 
-    
+    if (isAvailable === undefined) {
+      return res
+        .status(400)
+        .json({ message: "Availability status is required" });
+    }
 
     // Find the owner's restaurant
     const restaurant = await Restaurant.findOne({ owner: req.user.id });
@@ -214,8 +218,7 @@ exports.updateMenuItemAvailability = async (req, res) => {
       });
     }
 
-    const currrentSatatus = menuItem.isAvailable;
-    menuItem.isAvailable = !currrentSatatus;
+    menuItem.isAvailable = isAvailable;
     await menuItem.save();
 
     res.status(200).json({

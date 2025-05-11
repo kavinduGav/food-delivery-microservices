@@ -32,6 +32,22 @@ const menuItemSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    preparationTime: {
+      type: Number, 
+      default: 15,
+    },
+    specialDiets: {
+      vegetarian: { type: Boolean, default: false },
+      vegan: { type: Boolean, default: false },
+      glutenFree: { type: Boolean, default: false },
+      dairyFree: { type: Boolean, default: false },
+    },
+    spicyLevel: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

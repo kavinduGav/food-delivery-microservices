@@ -29,7 +29,7 @@ exports.verifyRestaurant = async (req, res) => {
     
     try {
       
-      await axios.put(`http://localhost:3000/api/auth/${restaurant.owner}/role`, {
+      await axios.put(`http://localhost:5000/api/auth/${restaurant.owner}/role`, {
         role: "restaurant_admin"
       }, {
         headers: {
@@ -130,11 +130,8 @@ exports.adminDeleteRestaurant = async (req, res) => {
   }
 };
 
-//?  =============================== RESTAURANT OWNER SPECIFIC LOGIC ===============================
-
-//? =============================== =============================== ===============================
-
-
+// RESTAURANT OWNER SPECIFIC LOGIC
+// ===============================
 
 // Get restaurant for the logged-in owner
 exports.getMyRestaurant = async (req, res) => {
@@ -168,7 +165,7 @@ exports.createRestaurant = async (req, res) => {
       });
     }
 
-    const { name, address, phone ,image } = req.body;
+    const { name, address, phone,category,image  } = req.body;
 
     // Create new restaurant with owner ID from JWT
     const restaurant = new Restaurant({
@@ -176,7 +173,8 @@ exports.createRestaurant = async (req, res) => {
       owner: req.user.id, // From JWT token
       address,
       phone,
-      image
+      category,
+      image,
      
     });
 
@@ -222,8 +220,13 @@ exports.updateMyRestaurant = async (req, res) => {
 // Update restaurant availability
 exports.updateMyRestaurantAvailability = async (req, res) => {
   try {
-  
-  
+    const { isAvailable } = req.body;
+
+    if (isAvailable === undefined) {
+      return res
+        .status(400)
+        .json({ message: "Availability status is required" });
+    }
 
     // Find restaurant by owner ID from JWT token
     const restaurant = await Restaurant.findOne({ owner: req.user.id });
@@ -233,8 +236,8 @@ exports.updateMyRestaurantAvailability = async (req, res) => {
         message: "You do not have a restaurant yet. Please create one first.",
       });
     }
-   const  currentStatus = restaurant.isAvailable;
-    restaurant.isAvailable = !currentStatus;
+
+    restaurant.isAvailable = isAvailable;
     await restaurant.save();
 
     res.status(200).json({

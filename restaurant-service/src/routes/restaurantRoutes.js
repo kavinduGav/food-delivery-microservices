@@ -10,10 +10,8 @@ const {
   isRestaurantOwnerOrAdmin,
 } = require("../middleware/authGuard");
 
-//?  =============================== admin routes ===============================
-
-//? =============================== =============================== ===============================
-router.get("/all", isAdmin, restaurantController.getAllRestaurants);
+// Admin routes
+router.get("/all",  restaurantController.getAllRestaurants);
 router.patch("/:id/verify", isAdmin, restaurantController.verifyRestaurant);
 router.get(
   "/unverified",
@@ -23,9 +21,7 @@ router.get(
 router.put("/:id", isAdmin, restaurantController.adminUpdateRestaurant);
 router.delete("/:id", isAdmin, restaurantController.adminDeleteRestaurant);
 
-///?  =============================== owner routes ===============================
-
-//? =============================== =============================== ===============================
+// Restaurant owner routes - automatically gets the owner's restaurant from JWT
 router.get(
   "/my-restaurant",
   isRestaurantOwner,
@@ -75,8 +71,7 @@ router.get("/verified", restaurantController.getVerifiedRestaurants);
 router.get("/:id", restaurantController.getRestaurantById);
 
 // Routes for menu items (public)
-//router.get("/:restaurantId/menu-items", menuItemController.getMenuItems);
-router.get("/public/menu-items", menuItemController.getMenuItemsClient);
+router.get("/:restaurantId/menu-items", menuItemController.getMenuItems);
 
 router.get("/menu-items/:id", menuItemController.getMenuItemById);
 router.get("/test/test", auth, restaurantController.test);

@@ -21,12 +21,7 @@ const restaurantSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    image: {
-      type: String,
-      default:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxUCrIfzlt6dnjOf7KWdHd6mbIxvAjRnahgg&s",
-    },
-
+   
     isAvailable: {
       type: Boolean,
       default: true,
@@ -38,6 +33,13 @@ const restaurantSchema = new mongoose.Schema(
     rating: {
       type: Number,
       default: 0,
+    },
+    category: {
+      type: String,
+      required: true,
+    },
+    image: {
+      type: String,
     },
   },
   { timestamps: true }
