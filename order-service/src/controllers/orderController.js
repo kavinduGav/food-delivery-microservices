@@ -54,7 +54,7 @@ exports.getUserOrders = async (req, res) => {
 exports.getOrderById = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
-                             .populate('restaurant', 'name');
+                             
     
     // Check if order exists
     if (!order) {
@@ -76,29 +76,24 @@ exports.getOrderById = async (req, res) => {
   }
 };
 
-// Cancel an order (only if status is pending)
 exports.cancelOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
     
-    // Check if order exists
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
     
-    // Check if user owns the order
     if (order.user.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Not authorized to cancel this order' });
     }
     
-    // Check if order can be cancelled
     if (order.status !== 'pending') {
       return res.status(400).json({ 
         message: 'Order cannot be cancelled at this stage' 
       });
     }
     
-    // Update order status
     order.status = 'cancelled';
     await order.save();
     
@@ -112,18 +107,15 @@ exports.cancelOrder = async (req, res) => {
   }
 };
 
-// Track order status
 exports.trackOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
                              .select('status createdAt updatedAt');
     
-    // Check if order exists
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
     
-    // Check if user owns the order
     if (order.user.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Not authorized to track this order' });
     }
@@ -142,17 +134,14 @@ exports.updateOrderStatus = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
     
-    // Check if order exists
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
     }
     
-    // Check if restaurant admin is authorized to update order status
     if (req.user.role !== 'restaurant_admin' || order.restaurant.toString() !== req.user.restaurant) {
       return res.status(403).json({ message: 'Not authorized to update this order' });
     }
     
-    // Update order status
     order.status = req.body.status;
     await order.save();
     
@@ -172,7 +161,6 @@ exports.getOrdersByRestaurant = async (req, res) => {
                               .populate('user', 'name email')
                               .sort({ createdAt: -1 });
 
-    // Check if restaurant admin is authorized to view orders
     if (req.user.role !== 'restaurant_admin') {
       return res.status(403).json({ message: 'Not authorized to view these orders' });
     }

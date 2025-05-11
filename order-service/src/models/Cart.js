@@ -41,7 +41,7 @@ const CartSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: '24h' // Auto-delete carts after 24 hours
+    expires: '24h' 
   }
 });
 

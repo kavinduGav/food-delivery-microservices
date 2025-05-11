@@ -11,7 +11,6 @@ const auth = (req, res, next) => {
     return res.status(401).json({ message: "No token, authorization denied" });
   }
 
-  // Verify token
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded.user;
@@ -21,7 +20,6 @@ const auth = (req, res, next) => {
   }
 };
 
-// Customer role guard
 const isCustomer = (req, res, next) => {
   auth(req, res, () => {
     if (req.user && req.user.role === "customer") {
