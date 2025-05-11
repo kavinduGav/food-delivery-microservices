@@ -1,17 +1,11 @@
 import mongoose from "mongoose";
 
 const itemSchema = new mongoose.Schema({
-    petId: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true
-    },
-    userId: {
-        type: String,
-        required: true,
-        trim: true
-    },
+ 
+   userId: {
+           type: mongoose.Schema.Types.ObjectId, // If userId is a reference to the User collection
+           required: true,
+         },
    
     name : {
         type: String,
@@ -41,6 +35,6 @@ const itemSchema = new mongoose.Schema({
   
 }, { timestamps: true });
 
-const Feedback = mongoose.model("Feedback", itemSchema);
+const Feedback = mongoose.model("FeedbackNew11", itemSchema);
 
 export default Feedback;

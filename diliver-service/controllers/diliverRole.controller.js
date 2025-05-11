@@ -1,13 +1,16 @@
 
 import DiliverOrder from "../models/diliverRole.model.js"; 
 
+import bodyParser  from 'body-parser';
+import nodemailer  from 'nodemailer';
 
 
 
 
 
-export const addDilivery=async(req,res,next)=>{
-    const {userId,
+export const addDelivery = async (req, res, next) => {
+    const {
+      email,
         customerName,
         restaurantName,
         pickupTime,
@@ -16,19 +19,20 @@ export const addDilivery=async(req,res,next)=>{
         totalAmount,
         createdAt,
         paymentMethod,
-        paymentStatus
-        }=req.body;
-
-    //create auto id for orderid
-    function idGen(userId){
-        const randomString=Math.random().toString(36).substring(2,10);
-        const id='ORD'+randomString+userId;
-        return id;
-    }
-    const currentId=idGen(userId)
-   
-
-    const newItem=new DiliverOrder({currentId,userId,
+        paymentStatus,
+      } = req.body;
+    
+      // Ensure that req.user contains the userId from the decoded token
+      const userId = req.user.id; // 🟢 Get userId from the decoded token
+    
+      // Make sure userId is not undefined or null
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is missing from token" });
+      }
+    
+      const newItem = new DiliverOrder({
+        userId, // 🟢 Store the userId in the database
+        email,
         customerName,
         restaurantName,
         pickupTime,
@@ -37,30 +41,101 @@ export const addDilivery=async(req,res,next)=>{
         totalAmount,
         createdAt,
         paymentMethod,
-        paymentStatus
-        });
-    try{
+        paymentStatus,
+      });
+    
+      try {
         await newItem.save();
-        res.status(202).json({message:"diliver  successfully"});
-    }catch(error){
-        next(error);
-    }
-   
-}
+        res.status(202).json({ message: "Delivery created successfully" });
+        
+      } catch (error) {
+        next(error); // Pass the error to your error handling middleware
+      }
+  };
+  
 
+  export const sendMail=async (req, res) => {
+    try {
+      const { email } = req.body;
+  
+     console.log(email+"==========================");
+  
+      // Create a Nodemailer transporter
+      let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'shehansalitha1999@gmail.com',
+          pass: 'hxjs rkrt bocu bdvj'
+        }
+      });
+  
+      // Send a thank you email
+      await transporter.sendMail({
+        from: 'shehansalitha1999@gmail.com',
+        to: email,
+        subject: 'Thank You for Selected Dilivery!',
+        text: 'Your Dilivery is Started!'
+        //         subject: 'Thank You for Your valuable feedback!',
+        // text: 'Thank you for placing your order with us!'
+      });
+  
+      res.status(200).json({ message: 'Email sent successfully' });
+    } catch (error) {
+      console.error('Error sending email:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+
+
+
+
+  export const CompleteDiliverysendMail=async (req, res) => {
+    try {
+      const { email } = req.body;
+  
+     console.log(email+"==========================");
+  
+      // Create a Nodemailer transporter
+      let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'shehansalitha1999@gmail.com',
+          pass: 'hxjs rkrt bocu bdvj'
+        }
+      });
+  
+      // Send a thank you email
+      await transporter.sendMail({
+        from: 'shehansalitha1999@gmail.com',
+        to: email,
+        subject: 'Thank You for Selected Dilivery!',
+        text: 'Your Dilivery  Successfull!'
+        //         subject: 'Thank You for Your valuable feedback!',
+        // text: 'Thank you for placing your order with us!'
+      });
+  
+      res.status(200).json({ message: 'Email sent successfully' });
+    } catch (error) {
+      console.error('Error sending email:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
 
 //get items by userid
-export const getDiliveryByAuth = async (req, res, next) => {
-    try{
-       const customerId=req.params.id;
-        const orders=await DiliverOrder.find({userId:customerId})
-        res.json(orders)
-    }catch(error){
-        console.log(error)
-        res.status(500).json({error:'Internal server error'})
-    }
-};
-
+export const getDiliveryByAuth = async (req, res) => {
+    try {
+        const userId = req.user.id; // 🟢 Decoded from token (req.user set by verifyToken)
+    
+        // Find deliveries for this user
+        const deliveries = await DiliverOrder.find({ userId: userId });
+    
+        res.status(200).json(deliveries);
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
+    
+  };
+  
 
 //all items
 export const allDilivery = async (req, res, next) => {
@@ -94,20 +169,20 @@ export const deleteDilivery = async (req, res, next) => {
     }
 }
 
-export const getForupdateDilivery= async (req, res) => {
+export const getForupdateDilivery = async (req, res) => {
     const id = req.params.id;
 
-    try {
-        const discount = await DiliverOrder.findById(id);
 
-        if (!discount) {
-            return res.status(404).send({ success: false, message: "User not found" });
+    try {
+        const delivery = await DiliverOrder.findById(id);
+
+        if (!delivery) {
+            return res.status(404).send({ success: false, message: "Delivery not found" });
         }
 
-        res.send({ success: true, message: "User fetched successfully", data: discount });
+        res.send({ success: true, message: "Delivery fetched successfully", data: delivery });
     } catch (error) {
         console.error(error);
         res.status(500).send({ success: false, message: "Internal Server Error" });
     }
 };
-

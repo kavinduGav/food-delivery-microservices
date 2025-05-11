@@ -2,20 +2,27 @@ import mongoose from "mongoose";
 
 const OrderSchema = new mongoose.Schema({
 
-    currentId: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true
-    },//default use for auth
-    userId: {
-        type: String,
-        required: true,
-        trim: true
-    },//default use for auth
+    // currentId: {
+    //     type: String,
+    //     required: true,
+    //     unique: true,
+    //     trim: true
+    // },//default use for auth
+    // userId: {
+    //     type: String,
+    //     required: true,
+    //     trim: true
+    // },//default use for auth
    
-
-    
+    userId: {
+        type: mongoose.Schema.Types.ObjectId, // If userId is a reference to the User collection
+        required: true,
+      },
+      email: {
+        type: String,
+        required: true,
+        trim: true
+      },
     customerName: {
        type: String,
        // type: mongoose.Schema.Types.ObjectId,
@@ -81,5 +88,5 @@ const OrderSchema = new mongoose.Schema({
         default: 'pending'
       },
 });
-const DiliverOrder = mongoose.model('DiliveryOrder', OrderSchema);
+const DiliverOrder = mongoose.model('DiliveryOrderNew5', OrderSchema);
 export default DiliverOrder;
