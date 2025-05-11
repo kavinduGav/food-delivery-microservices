@@ -15,4 +15,7 @@ router.get('/me', auth, authController.getMe);
 // Verify token
 router.get('/verify', auth, authController.verifyToken);
 
+// In auth-service/src/routes/users.js
+router.put('/:userId/role', auth, authController.updateUserRole);
+
 module.exports = router;
